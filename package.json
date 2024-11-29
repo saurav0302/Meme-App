@@ -1,0 +1,25 @@
+{
+  "name": "meme-app",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "saurav kosti",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.7.8",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.3",
+    "connect-mongo": "^5.1.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "mongoose": "^8.8.3",
+    "nodemon": "^3.1.7",
+    "path": "^0.12.7",
+    "router": "^1.3.8"
+  }
+}
