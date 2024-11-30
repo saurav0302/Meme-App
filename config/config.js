@@ -1,10 +1,4 @@
 require('dotenv').config();  
 
-module.exports = {
-    memeSubreddits: [
-        'memes', 
-        'dankmemes', 
-        'wholesomememes', 
-        'funny'
-    ]
-};
+// config/config.js
+exports.memeSubreddits = ['memes', 'dankmemes', 'wholesomememes'];
