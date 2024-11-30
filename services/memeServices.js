@@ -23,6 +23,7 @@ async function getRedditAccessToken() {
                 }
             }
         );
+        console.log('Reddit Access Token:', response.data.access_token); // Log token to ensure it's correct
         return response.data.access_token;
     } catch (error) {
         console.error('Error getting Reddit access token:', error.message);
@@ -33,10 +34,10 @@ async function getRedditAccessToken() {
 // Function to fetch memes from Reddit
 async function fetchRedditMeme() {
     try {
-        // Get access token
         const accessToken = await getRedditAccessToken();
         
         const randomSubreddit = memeSubreddits[Math.floor(Math.random() * memeSubreddits.length)];
+        console.log(`Requesting: https://oauth.reddit.com/r/${randomSubreddit}/random`);
         
         // Make authenticated request
         const response = await axios.get(
@@ -46,18 +47,16 @@ async function fetchRedditMeme() {
                     'Authorization': `Bearer ${accessToken}`,
                     'User-Agent': REDDIT_USER_AGENT
                 },
-                timeout: 5000
+                timeout: 10000 // Increase timeout to 10 seconds
             }
         );
 
-        // Handle case where response doesn't contain expected data
         if (!response.data?.[0]?.data?.children?.[0]?.data) {
             throw new Error('Invalid response structure from Reddit');
         }
 
         const post = response.data[0].data.children[0].data;
 
-        // Check if the post contains an image
         if (post.post_hint === 'image' && post.url) {
             return {
                 title: post.title || 'Untitled',
@@ -70,13 +69,10 @@ async function fetchRedditMeme() {
             };
         }
 
-        // If not an image post, retry
-        return await fetchRedditMeme();
+        return await fetchRedditMeme(); // Retry if not an image post
 
     } catch (error) {
         console.error('Error fetching Reddit meme:', error.message);
-        
-        // Return a fallback object
         return {
             title: 'Error loading meme',
             url: 'https://via.placeholder.com/500x500.png?text=Unable+to+load+meme',
@@ -89,4 +85,4 @@ async function fetchRedditMeme() {
     }
 }
 
-module.exports = { fetchRedditMeme };   
+module.exports = { fetchRedditMeme };
