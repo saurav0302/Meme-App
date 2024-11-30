@@ -1,17 +1,17 @@
 const axios = require('axios');
-const { memeSubreddits } = require('./../config/config');
+const { memeSubreddits } = require('./../config/config'); // Assuming you have this list in your config
 
 // Reddit OAuth configuration
-const REDDIT_CLIENT_ID = process.env.YOUR_CLIENT_ID;
-const REDDIT_CLIENT_SECRET = process.env.YOUR_CLIENT_SECRET;
-const REDDIT_USER_AGENT = 'NodeJS:MemeApp:v1.0.0 (by /u/CorgiBeginning3298)';  // Replace with your actual username
+const REDDIT_CLIENT_ID = process.env.YOUR_CLIENT_ID; // Replace with your Reddit app's client ID
+const REDDIT_CLIENT_SECRET = process.env.YOUR_CLIENT_SECRET; // Replace with your Reddit app's client secret
+const REDDIT_USER_AGENT = 'NodeJS:MemeApp:v1.0.0 (by /u/CorgiBeginning3298)';  // Replace with your actual Reddit username
 
-// Function to get OAuth access token
+// Function to get Reddit OAuth access token
 async function getRedditAccessToken() {
     try {
         const response = await axios.post(
             'https://www.reddit.com/api/v1/access_token',
-            'grant_type=client_credentials',
+            'grant_type=client_credentials', // client credentials flow
             {
                 auth: {
                     username: REDDIT_CLIENT_ID,
@@ -34,32 +34,40 @@ async function getRedditAccessToken() {
 // Function to fetch memes from Reddit
 async function fetchRedditMeme() {
     try {
+        // Get access token
         const accessToken = await getRedditAccessToken();
         
+        // Randomly pick a subreddit from your memeSubreddits array
         const randomSubreddit = memeSubreddits[Math.floor(Math.random() * memeSubreddits.length)];
         console.log(`Requesting: https://oauth.reddit.com/r/${randomSubreddit}/random`);
         
+        // Fetch random meme post from the chosen subreddit
         const response = await axios.get(
             `https://oauth.reddit.com/r/${randomSubreddit}/random`,
             {
                 headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'User-Agent': REDDIT_USER_AGENT
+                    'Authorization': `Bearer ${accessToken}`, // Bearer token authentication
+                    'User-Agent': REDDIT_USER_AGENT // User-Agent header is required by Reddit API
                 },
-                timeout: 10000 // Increase timeout to 10 seconds
+                timeout: 10000 // 10 seconds timeout to avoid hanging requests
             }
         );
 
+        // Handle 403 Forbidden errors
         if (response.status === 403) {
             console.error(`Forbidden: Reddit API returned 403 for subreddit ${randomSubreddit}`);
+            return getErrorResponse(`403 Forbidden on subreddit ${randomSubreddit}`);
         }
 
+        // Check the response data structure
         if (!response.data?.[0]?.data?.children?.[0]?.data) {
             throw new Error('Invalid response structure from Reddit');
         }
 
+        // Extract the post data
         const post = response.data[0].data.children[0].data;
 
+        // If the post is an image, return the meme data
         if (post.post_hint === 'image' && post.url) {
             return {
                 title: post.title || 'Untitled',
@@ -72,26 +80,32 @@ async function fetchRedditMeme() {
             };
         }
 
-        return await fetchRedditMeme(); // Retry if not an image post
+        // Retry fetching if the post is not an image
+        return await fetchRedditMeme();
 
     } catch (error) {
+        // Handle errors that occur during the API request
+        console.error('Error fetching Reddit meme:', error.message);
         if (error.response) {
             console.error('Error response status:', error.response.status);
             console.error('Error response data:', error.response.data);
-        } else {
-            console.error('Error fetching Reddit meme:', error.message);
         }
-
-        return {
-            title: 'Error loading meme',
-            url: 'https://via.placeholder.com/500x500.png?text=Unable+to+load+meme',
-            author: 'System',
-            subreddit: 'r/error',
-            score: 0,
-            sourceLink: '#',
-            error: error.message
-        };
+        return getErrorResponse(error.message);
     }
 }
 
+// Helper function to return a default error response if something goes wrong
+function getErrorResponse(errorMessage) {
+    return {
+        title: 'Error loading meme',
+        url: 'https://via.placeholder.com/500x500.png?text=Unable+to+load+meme',
+        author: 'System',
+        subreddit: 'r/error',
+        score: 0,
+        sourceLink: '#',
+        error: errorMessage
+    };
+}
+
+// Export the function so it can be used in other parts of the app
 module.exports = { fetchRedditMeme };
