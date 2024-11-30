@@ -3,6 +3,6 @@ module.exports = {
     reddit: {
         clientId: process.env.YOUR_CLIENT_ID,
         clientSecret: process.env.YOUR_CLIENT_SECRET,
-        username: 'your_reddit_username'
+        username: 'CorgiBeginning3298'
     }
 };
