@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const userRoutes = require('./routes/userRoutes');
 const MongoStore = require('connect-mongo');
-
+require('dotenv').config();
 const app = express();
 
 
@@ -24,7 +24,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-        mongoUrl: process.env.MONGODB_LOCAL_URL,
+        mongoUrl: process.env.MONGODB_ATLAS_URL,
         ttl: 24 * 60 * 60 // Session TTL in seconds
     }),
     cookie: {
@@ -32,7 +32,6 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
-console.log(process.env.NODE_ENV);
 
 // Global middleware to make user available in templates
 app.use((req, res, next) => {
@@ -62,7 +61,7 @@ app.use((req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running.....!!`);
+    console.log("Server is Started");
 });
 
 module.exports = app;

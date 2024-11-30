@@ -19,9 +19,18 @@ const login = async (req, res) => {
             return res.render('login', { message: 'Invalid email or password' });
         }
         
-        req.session.user = user;
+        req.session.user = {
+            _id: user._id,
+            email: user.email,
+            name: user.name
+        };
+         
+        // console.log('Session before save:', req.session);
+        await req.session.save();
+        // console.log('Session after save:', req.session);
         res.redirect('/meme');
     } catch (error) {
+        console.error('Login error:', error);
         res.render('login', { message: 'Login failed. Please try again.' });
     }
 };

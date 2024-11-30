@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { memeSubreddits } = require('../config/config');
+const { memeSubreddits } = require('./../config/config');
 
 // Function to fetch memes from Reddit
 async function fetchRedditMeme() {

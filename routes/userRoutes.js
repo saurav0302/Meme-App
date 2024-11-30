@@ -1,7 +1,7 @@
 const express = require('express');
-const { isAuthenticated } = require('../middleware/auth');
-const { signup, login, logout } = require('../controllers/authController');
-const { getMeme, getNewMeme } = require('../controllers/memeController');
+const { isAuthenticated } = require('./../middleware/auth');
+const { signup, login, logout } = require('./../controllers/authController');
+const { getMeme, getNewMeme } = require('./../controllers/memeController');
 
 const router = express.Router();
 

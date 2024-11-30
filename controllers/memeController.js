@@ -18,7 +18,11 @@ const getNewMeme = async (req, res) => {
 
         // increment user count 
         if (req.user) {
-            await req.user.incrementMemeViews();
+            if (req.session.user) {
+                const user = await User.findById(req.session.user._id);
+                await user.incrementMemeViews();
+                user.save();
+            }
         }
 
         res.json(meme); // Send the meme data as JSON response
