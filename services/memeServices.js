@@ -23,7 +23,7 @@ async function getRedditAccessToken() {
                 }
             }
         );
-        console.log('Reddit Access Token:', response.data.access_token);  // Log token for debugging
+        // console.log('Reddit Access Token:', response.data.access_token);  // Log token for debugging
         return response.data.access_token;
     } catch (error) {
         console.error('Error getting Reddit access token:', error.message);
@@ -49,8 +49,9 @@ async function fetchRedditMeme() {
                     'Authorization': `Bearer ${accessToken}`, // Bearer token authentication
                     'User-Agent': REDDIT_USER_AGENT // User-Agent header is required by Reddit API
                 },
-                timeout: 10000 // 10 seconds timeout to avoid hanging requests
-            }
+                timeout: 5000 // 10 seconds timeout to avoid hanging requests
+            },
+            console.log('Response status:', response.status)
         );
 
         // Handle 403 Forbidden errors

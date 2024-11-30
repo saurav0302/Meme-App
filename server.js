@@ -28,7 +28,7 @@ app.use(session({
         ttl: 24 * 60 * 60 // Session TTL in seconds
     }),
     cookie: {
-        secure: false,
+        secure: true,
         maxAge: 24 * 60 * 60 * 1000
     }
 }));
