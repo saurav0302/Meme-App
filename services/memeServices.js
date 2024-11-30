@@ -51,9 +51,9 @@ async function fetchRedditMeme() {
                 },
                 timeout: 5000 // 10 seconds timeout to avoid hanging requests
             },
-            console.log('Response status:', response.status)
         );
-
+        console.log('Response status:', response.status)
+        
         // Handle 403 Forbidden errors
         if (response.status === 403) {
             console.error(`Forbidden: Reddit API returned 403 for subreddit ${randomSubreddit}`);
